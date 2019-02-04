@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:state_checked="true"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home"
+        android:color="@color/colorPrimaryDark" />
+
+    <item
+        android:id="@+id/navigation_top_list"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/title_dashboard"
+        android:state_checked="false"
+        android:color="@color/colorPrimaryDark" />
+
+    <item
+        android:id="@+id/navigation_favorites"
+        android:state_checked="false"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/title_notifications"
+        android:color="@color/colorPrimaryDark" />
+
+
+</menu>
