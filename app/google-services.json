@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "531372759274",
+    "firebase_url": "https://montaditos-f976b.firebaseio.com",
+    "project_id": "montaditos-f976b",
+    "storage_bucket": "montaditos-f976b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531372759274:android:ab95caf3e15d60b9",
+        "android_client_info": {
+          "package_name": "com.uc3m.a100montaditos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531372759274-kti8jk6okd71ghcahig95m6gjieru0c1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uc3m.a100montaditos",
+            "certificate_hash": "af06387cae8a95aee339e3202adcadc39fc9e78f"
+          }
+        },
+        {
+          "client_id": "531372759274-t1kscjghidq2jnodc0um08v62ra06l45.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCjBTMVet4VMTTcnR_nW6XWpAUlvxVDgE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531372759274-t1kscjghidq2jnodc0um08v62ra06l45.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
