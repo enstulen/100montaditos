@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new FavoritesFragment();
                 break;
             case R.id.navigation_top_list:
-                fragment = new FavoritesFragment();
+                fragment = new ToplistFragment();
                 break;
         }
         return loadFragment(fragment);
