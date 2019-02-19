@@ -41,7 +41,8 @@
         android:layout_below="@id/textView_name"
         android:layout_marginStart="30dp"
         android:layout_toRightOf="@id/imageView"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="@color/colorGray"/>
     <TextView
         android:id="@+id/textView_description_english"
         android:layout_width="wrap_content"
@@ -49,7 +50,8 @@
         android:layout_below="@id/textView_description_spanish"
         android:layout_marginStart="30dp"
         android:layout_toRightOf="@id/imageView"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="@color/colorGray"/>
 
     <TextView
         android:textSize="23sp"

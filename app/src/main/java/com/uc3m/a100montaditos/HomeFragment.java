@@ -23,15 +23,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements MainRecyclerViewAdapter.ItemClickListener {
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
+
+public class HomeFragment extends Fragment {
 
     private Context context;
     DatabaseReference menuItemsDatabase;
-    List<MenuItem> menuItemList;
+    List<MenuItem> montaditosList, drinksList;
     ListView listView;
     RecyclerView recyclerView;
-    HomeListViewAdapter homeListViewAdapter;
-    MainRecyclerViewAdapter mainRecyclerViewAdapter;
+    SectionedRecyclerViewAdapter sectionAdapter;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -39,48 +40,49 @@ public class HomeFragment extends Fragment implements MainRecyclerViewAdapter.It
 
         //Set up firebase
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
-        menuItemList = new ArrayList<MenuItem>();
-        //homeListViewAdapter.menuItemList = menuItemList;
+        montaditosList = new ArrayList<MenuItem>();
+        drinksList = new ArrayList<MenuItem>();
 
-        // set up the RecyclerView
+        // Create an instance of SectionedRecyclerViewAdapter
+        sectionAdapter = new SectionedRecyclerViewAdapter();
+
+        // Create sections with the list of data
+        MenuItemSection favoritesSection = new MenuItemSection("Montaditos", montaditosList);
+        MenuItemSection contactsSection = new MenuItemSection("Drinks", drinksList);
+
+        // Add Sections to the adapter
+        sectionAdapter.addSection(favoritesSection);
+        sectionAdapter.addSection(contactsSection);
+
+        // Set up RecyclerView with the SectionedRecyclerViewAdapter
         recyclerView = getView().findViewById(R.id.menuItems_recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mainRecyclerViewAdapter = new MainRecyclerViewAdapter(getActivity(), menuItemList);
-        recyclerView.setAdapter(mainRecyclerViewAdapter);
-        mainRecyclerViewAdapter.setClickListener(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(sectionAdapter);
 
-
-        //Set up listView
-/*        listView = getView().findViewById(R.id.listView);
-        homeListViewAdapter = new HomeListViewAdapter(getActivity());
-        listView.setAdapter(homeListViewAdapter);*/
-
-
-        //Get initial data
-/*        menuItemsDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                getDataAndUpdateListView(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });*/
 
     }
 
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
-        menuItemList.clear();
+        montaditosList.clear();
+        drinksList.clear();
+
         for (DataSnapshot montaditoSnapshot : dataSnapshot.getChildren()) {
             MenuItem menuItem = montaditoSnapshot.getValue(MenuItem.class);
-            menuItemList.add(menuItem);
+            if (menuItem.getType().equals("montadito")) {
+                montaditosList.add(menuItem);
+            } else if (menuItem.getType().equals("drink")) {
+                drinksList.add(menuItem);
+            }
         }
 
-        mainRecyclerViewAdapter.menuItems = menuItemList;
-        recyclerView.setAdapter(mainRecyclerViewAdapter);
+        sectionAdapter.removeAllSections();
+        MenuItemSection favoritesSection = new MenuItemSection("Montaditos", montaditosList);
+        MenuItemSection contactsSection = new MenuItemSection("Drinks", drinksList);
 
-        //homeListViewAdapter.menuItemList = menuItemList;
-        //listView.setAdapter(homeListViewAdapter);
+        sectionAdapter.addSection(favoritesSection);
+        sectionAdapter.addSection(contactsSection);
+        recyclerView.setAdapter(sectionAdapter);
+
     }
 
     @Override
@@ -106,8 +108,4 @@ public class HomeFragment extends Fragment implements MainRecyclerViewAdapter.It
         return inflater.inflate(R.layout.fragment_home, null);
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_LONG).show();
-    }
 }
