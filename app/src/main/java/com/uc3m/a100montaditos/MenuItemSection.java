@@ -54,7 +54,7 @@ class MenuItemSection extends StatelessSection {
         itemHolder.textView_name.setText(name);
         itemHolder.textView_description_spanish.setText(description_spanish);
         itemHolder.textView_description_english.setText(description_english);
-        itemHolder.textView_price.setText(price);
+        itemHolder.textView_price.setText(price + "€");
 
         Picasso.get()
                 .load(list.get(position).getImageUrl())

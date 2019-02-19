@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         loadFragment(new HomeFragment());
 
         FirebaseApp.initializeApp(this);
+
+        //Custom action bar
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar);
+        TextView actionBarTitle = findViewById(R.id.action_bar_title);
+        actionBarTitle.setText("Menu");
     }
 
     private boolean loadFragment(Fragment fragment) {

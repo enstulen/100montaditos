@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -27,16 +28,18 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 
 public class HomeFragment extends Fragment {
 
-    private Context context;
     DatabaseReference menuItemsDatabase;
     List<MenuItem> montaditosList, drinksList;
-    ListView listView;
     RecyclerView recyclerView;
     SectionedRecyclerViewAdapter sectionAdapter;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Set title
+        TextView title = getActivity().findViewById(getResources().getIdentifier("action_bar_title", "id", getActivity().getPackageName()));
+        title.setText("Menu");
 
         //Set up firebase
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
