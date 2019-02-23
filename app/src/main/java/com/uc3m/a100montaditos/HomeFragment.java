@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,18 +50,21 @@ public class HomeFragment extends Fragment {
         // Create an instance of SectionedRecyclerViewAdapter
         sectionAdapter = new SectionedRecyclerViewAdapter();
 
-        // Create sections with the list of data
-        MenuItemSection favoritesSection = new MenuItemSection("Montaditos", montaditosList);
-        MenuItemSection contactsSection = new MenuItemSection("Drinks", drinksList);
-
-        // Add Sections to the adapter
-        sectionAdapter.addSection(favoritesSection);
-        sectionAdapter.addSection(contactsSection);
-
         // Set up RecyclerView with the SectionedRecyclerViewAdapter
         recyclerView = getView().findViewById(R.id.menuItems_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(sectionAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (recyclerView.computeVerticalScrollOffset() == 0) {
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().setElevation(0);
+                } else {
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().setElevation(4 * getContext().getResources().getDisplayMetrics().density);
+                }
+            }
+        });
 
 
     }
@@ -79,8 +83,8 @@ public class HomeFragment extends Fragment {
         }
 
         sectionAdapter.removeAllSections();
-        MenuItemSection favoritesSection = new MenuItemSection("Montaditos", montaditosList);
-        MenuItemSection contactsSection = new MenuItemSection("Drinks", drinksList);
+        MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList);
+        MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList);
 
         sectionAdapter.addSection(favoritesSection);
         sectionAdapter.addSection(contactsSection);

@@ -1,6 +1,7 @@
 package com.uc3m.a100montaditos;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -39,7 +40,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar);
         TextView actionBarTitle = findViewById(R.id.action_bar_title);
+        getSupportActionBar().setElevation(0);
         actionBarTitle.setText("Menu");
+
+
     }
 
     private boolean loadFragment(Fragment fragment) {
