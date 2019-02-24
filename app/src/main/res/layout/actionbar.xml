@@ -13,5 +13,6 @@
         android:id="@+id/action_bar_title"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
+        android:layout_marginLeft="15dp"
         />
 </LinearLayout>

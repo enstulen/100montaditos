@@ -84,11 +84,14 @@ public class HomeFragment extends Fragment {
         }
 
         sectionAdapter.removeAllSections();
-        MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
-        MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
-
-        sectionAdapter.addSection(favoritesSection);
-        sectionAdapter.addSection(contactsSection);
+        if (!montaditosList.isEmpty()) {
+            MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
+            sectionAdapter.addSection(favoritesSection);
+        }
+        if (!drinksList.isEmpty()) {
+            MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
+            sectionAdapter.addSection(contactsSection);
+        }
         recyclerView.setAdapter(sectionAdapter);
 
     }

@@ -1,6 +1,7 @@
 package com.uc3m.a100montaditos;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
@@ -8,8 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -112,13 +116,45 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 int position = sectionAdapter.getPositionInSection(getAdapterPosition());
-                Toast.makeText(itemView.getContext(), "Added to favorites", Toast.LENGTH_LONG).show();
                 MenuItem menuItem = list.get(position);
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("favorites");
-                databaseReference.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).setValue(menuItem);
+                updateFavorite(menuItem);
+
             }
         });
 
+    }
+
+    public void updateFavorite(final MenuItem menuItem) {
+        DatabaseReference favoritesDatabase = FirebaseDatabase.getInstance().getReference("favorites");
+
+        favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DatabaseReference menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
+                DatabaseReference favoritesDatabase = FirebaseDatabase.getInstance().getReference("favorites");
+                if (dataSnapshot.exists()) {
+                    //Remove 1 to menuItem's total favorites
+                    menuItem.setFavorites(menuItem.getFavorites() - 1);
+                    menuItemsDatabase.child(menuItem.getUid()).setValue(menuItem);
+                    //Remove from personal favorite
+                    favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).removeValue();
+                    Toast.makeText(itemView.getContext(), "Removed from favorites", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    //Add 1 to menuItem's total favorites
+                    menuItem.setFavorites(menuItem.getFavorites() + 1);
+                    menuItemsDatabase.child(menuItem.getUid()).setValue(menuItem);
+                    //Add to personal favorite
+                    favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).setValue(menuItem);
+                    Toast.makeText(itemView.getContext(), "Added to favorites", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
 
