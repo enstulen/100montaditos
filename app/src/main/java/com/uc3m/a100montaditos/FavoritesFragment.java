@@ -1,6 +1,7 @@
 package com.uc3m.a100montaditos;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -38,11 +40,15 @@ public class FavoritesFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(getActivity(), "Added to DB", Toast.LENGTH_LONG).show();
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+
+   /*             Toast.makeText(getActivity(), "Added to DB", Toast.LENGTH_LONG).show();
                 databaseMontaditos = FirebaseDatabase.getInstance().getReference("menuItems");
                 String id = databaseMontaditos.push().getKey();
                 MenuItem menuItem = new MenuItem("#1", "Espanol", "english", 2.5, "https://firebasestorage.googleapis.com/v0/b/montaditos-f976b.appspot.com/o/menu-items%2F1.jpg?alt=media&token=72309587-4e9e-486f-8485-8283d9c126bf", 1, "montadito");
-                databaseMontaditos.child(id).setValue(menuItem);
+                databaseMontaditos.child(id).setValue(menuItem);*/
             }
         });
 
