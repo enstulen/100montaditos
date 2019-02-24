@@ -5,12 +5,35 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ToplistFragment extends Fragment {
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class ToplistFragment extends Fragment implements TopListRecyclerViewAdapter.ItemClickListener{
+
+    DatabaseReference menuItemsDatabase;
+    TopListRecyclerViewAdapter adapter;
+    ArrayList<MenuItem> menuItems = new ArrayList<>();
+    RecyclerView recyclerView;
+    Query topListQuery;
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -22,6 +45,51 @@ public class ToplistFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         TextView title = getActivity().findViewById(getResources().getIdentifier("action_bar_title", "id", getActivity().getPackageName()));
         title.setText("Top List");
+
+        // set up the RecyclerView
+        recyclerView = getActivity().findViewById(R.id.toplist_recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new TopListRecyclerViewAdapter(getContext(), menuItems);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+
+        menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
+        topListQuery = menuItemsDatabase.orderByChild("favorites").limitToFirst(100);
+
+    }
+
+    public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
+        menuItems.clear();
+
+        for (DataSnapshot montaditoSnapshot : dataSnapshot.getChildren()) {
+            MenuItem menuItem = montaditoSnapshot.getValue(MenuItem.class);
+            menuItem.setUid(montaditoSnapshot.getKey());
+            menuItems.add(menuItem);
+        }
+        Collections.reverse(menuItems);
+
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        topListQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                getDataAndUpdateListView(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
 
     }
 }
