@@ -75,6 +75,7 @@ public class HomeFragment extends Fragment {
 
         for (DataSnapshot montaditoSnapshot : dataSnapshot.getChildren()) {
             MenuItem menuItem = montaditoSnapshot.getValue(MenuItem.class);
+            menuItem.setUid(montaditoSnapshot.getKey());
             if (menuItem.getType().equals("montadito")) {
                 montaditosList.add(menuItem);
             } else if (menuItem.getType().equals("drink")) {
@@ -83,8 +84,8 @@ public class HomeFragment extends Fragment {
         }
 
         sectionAdapter.removeAllSections();
-        MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList);
-        MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList);
+        MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
+        MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
 
         sectionAdapter.addSection(favoritesSection);
         sectionAdapter.addSection(contactsSection);

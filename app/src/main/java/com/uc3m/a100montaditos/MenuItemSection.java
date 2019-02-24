@@ -8,11 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -20,8 +23,10 @@ class MenuItemSection extends StatelessSection {
 
     String title;
     List<MenuItem> list;
+    SectionedRecyclerViewAdapter sectionAdapter;
 
-    public MenuItemSection(String title, List<MenuItem> list) {
+
+    public MenuItemSection(String title, List<MenuItem> list, SectionedRecyclerViewAdapter sectionAdapter) {
         // call constructor with layout resources for this Section header, footer and items
         super(SectionParameters.builder()
                 .itemResourceId(R.layout.menuitems_recyclerview_row)
@@ -29,6 +34,7 @@ class MenuItemSection extends StatelessSection {
                 .build());
         this.title = title;
         this.list = list;
+        this.sectionAdapter = sectionAdapter;
     }
 
     @Override
@@ -39,7 +45,7 @@ class MenuItemSection extends StatelessSection {
     @Override
     public RecyclerView.ViewHolder getItemViewHolder(View view) {
         // return a custom instance of ViewHolder for the items of this section
-        return new MenuItemViewHolder(view);
+        return new MenuItemViewHolder(view, sectionAdapter,list);
     }
 
     @Override
@@ -90,7 +96,7 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
     TextView textView_price;
     ImageView imageView;
 
-    public MenuItemViewHolder(final View itemView) {
+    public MenuItemViewHolder(final View itemView, final SectionedRecyclerViewAdapter sectionAdapter, final List<MenuItem> list) {
         super(itemView);
         imageView = itemView.findViewById(R.id.imageView);
 
@@ -105,8 +111,11 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(itemView.getContext(), "Clicked: " + getAdapterPosition(), Toast.LENGTH_LONG).show();
-
+                int position = sectionAdapter.getPositionInSection(getAdapterPosition());
+                Toast.makeText(itemView.getContext(), "Added to favorites", Toast.LENGTH_LONG).show();
+                MenuItem menuItem = list.get(position);
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("favorites");
+                databaseReference.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).setValue(menuItem);
             }
         });
 

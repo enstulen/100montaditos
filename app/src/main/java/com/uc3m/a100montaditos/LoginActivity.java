@@ -26,11 +26,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity  extends AppCompatActivity {
 
     private SignInButton signInButton;
-    private GoogleApiClient googleApiClient;
     private GoogleSignInClient googleSignInClient;
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
@@ -41,12 +45,11 @@ public class LoginActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.login_view);
+        getSupportActionBar().hide();
 
         signInButton = findViewById(R.id.signInButton);
 
         FirebaseApp.initializeApp(this);
-        getSupportActionBar().hide();
-
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -62,13 +65,6 @@ public class LoginActivity  extends AppCompatActivity {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
-            }
-        }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
-
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +77,6 @@ public class LoginActivity  extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-
     }
 
     @Override
@@ -96,18 +91,31 @@ public class LoginActivity  extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                System.out.println("fail1");
-
+                Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
                 // Google Sign In failed, update UI appropriately
             }
         }
     }
 
     private void updateUI(FirebaseUser user) {
-        System.out.println("HEEEERE");
-
-        System.out.println(user);
         if (user != null ) {
+            final User loggedInUser = new User(user.getUid(), user.getEmail(), user.getDisplayName());
+            User.setCurrentUser(loggedInUser);
+
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.hasChild(loggedInUser.getUid())) {
+                        databaseReference.child(loggedInUser.getUid()).setValue(loggedInUser);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
@@ -126,9 +134,7 @@ public class LoginActivity  extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            System.out.println("fail");
-
-                            // If sign in fails, display a message to the user.
+                            Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
                             updateUI(null);
                         }
                     }

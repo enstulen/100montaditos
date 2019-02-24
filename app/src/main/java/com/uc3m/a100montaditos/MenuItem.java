@@ -1,6 +1,7 @@
 package com.uc3m.a100montaditos;
 
 public class MenuItem {
+    String uid;
     String name;
     String description_spanish;
     String description_english;
@@ -77,5 +78,13 @@ public class MenuItem {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
