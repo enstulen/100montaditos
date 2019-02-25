@@ -109,9 +109,6 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
         textView_description_english =  itemView.findViewById(R.id.textView_description_english);
         textView_price =  itemView.findViewById(R.id.textView_price);
 
-        textView_name.setTextSize(1, 23);
-        textView_name.setTextColor(Color.BLACK);
-
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
