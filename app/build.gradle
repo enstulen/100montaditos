@@ -40,5 +40,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
 
+    // Add Google play service dependencies
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+
+
 }
 apply plugin: 'com.google.gms.google-services'
