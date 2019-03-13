@@ -2,16 +2,24 @@ package com.uc3m.a100montaditos;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -21,9 +29,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsViewFragment extends Fragment {
 
@@ -51,6 +64,7 @@ public class MapsViewFragment extends Fragment {
     }
 
     MapView mMapView;
+    EditText mSearchText;
     private GoogleMap googleMap;
 
     @Override
@@ -60,7 +74,12 @@ public class MapsViewFragment extends Fragment {
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
+
         mMapView.onResume(); // needed to get the map to display immediately
+        mSearchText = (EditText) rootView.findViewById(R.id.search); //Get the searchBar
+
+        init(); //launch the map search feature
+
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -86,9 +105,17 @@ public class MapsViewFragment extends Fragment {
                 }
                 googleMap.setMyLocationEnabled(true);
 
+
+                    System.out.println("get into marker");
                     // For dropping a marker at a point on the Map
                     LatLng sydney = new LatLng(-34, 151);
-                    googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(sydney)
+                            .title("Marker Title")
+                            .snippet("Marker in Sidney")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .draggable(false)
+                            .visible(true));
 
                     // For zooming automatically to the location of the marker
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
@@ -98,6 +125,84 @@ public class MapsViewFragment extends Fragment {
 
             return rootView;
         }
+
+
+        private void init(){
+        Log.d(TAG, "init:initializing");
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId== EditorInfo.IME_ACTION_SEARCH || actionId== EditorInfo.IME_ACTION_DONE
+                || actionId==KeyEvent.ACTION_DOWN || actionId== KeyEvent.KEYCODE_ENTER){
+                    //execute the searching method
+                    geoLocate();
+                }
+                return false;
+            }
+        });
+        }
+
+        private void geoLocate(){
+            Log.d(TAG, "geoLocate : geolocating");
+            String searchString = mSearchText.getText().toString();
+            searchString=searchString;
+            Geocoder geocoder = new Geocoder(getActivity());
+            List<Address> list = new ArrayList<>();
+
+
+
+            try {
+                list=geocoder.getFromLocationName(searchString,10);
+            }catch (IOException e){
+                Log.d(TAG, "geoLocate : catch IOException: "+e.getMessage());
+            }
+            if (list.size() > 0){
+                //Address address = list.get(0);
+                //Log.d(TAG, "geoLocate : found a place: "+address.toString());
+                for(int i = 0;i<list.size();i++)
+                {
+                    LatLng latLng = new LatLng(list.get(i).getLatitude() , list.get(i).getLongitude());
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title(searchString);
+                    googleMap.addMarker(markerOptions);
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                }
+            }
+            googleMap.clear();
+            EditText tf_location =  getActivity().findViewById(R.id.search);
+            String location = tf_location.getText().toString();
+            String school = "100 montaditos";
+            double latitude,longitude;
+            latitude = list.get(0).getLatitude();
+            longitude = list.get(0).getLongitude();
+            Object dataTransfer[] = new Object[2];
+            GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+            String url = getUrl(latitude, longitude, school);
+
+            dataTransfer[0] = googleMap;
+            dataTransfer[1] = url;
+
+            getNearbyPlacesData.execute(dataTransfer);
+            Toast.makeText(getActivity(), "Showing Nearby Schools", Toast.LENGTH_SHORT).show();
+        }
+
+
+    private String getUrl(double latitude , double longitude , String nearbyPlace)
+    {
+        // https://maps.googleapis.com/maps/api/place/textsearch/xml?query=restaurants+in+Sydney&key=AIzaSyAsigS5hYBlU0gr9wakZmaGrrKOe3RMwNA
+        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location="+latitude+","+longitude);
+        googlePlaceUrl.append("&radius="+2000);
+        googlePlaceUrl.append("&type="+nearbyPlace);
+        googlePlaceUrl.append("&sensor=true");
+        googlePlaceUrl.append("&key="+"AIzaSyAsigS5hYBlU0gr9wakZmaGrrKOe3RMwNA");
+
+        Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());
+
+        return googlePlaceUrl.toString();
+    }
 
         @Override
         public void onResume() {
