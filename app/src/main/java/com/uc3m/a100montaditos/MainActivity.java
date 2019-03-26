@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ToplistFragment();
                 break;
             case R.id.navigation_maps:
-                fragment = new MapsViewFragment();
+                fragment = new GoogleMapsFragment();
         }
         return loadFragment(fragment);
     }
