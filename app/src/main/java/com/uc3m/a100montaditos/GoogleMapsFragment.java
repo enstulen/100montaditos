@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+
 class GooglePlace {
     private String name;
     private String latitude;
@@ -70,29 +71,19 @@ class GooglePlace {
 }
 
 public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
-    //_-----------------------------------------------------------------------------------------------
 
-    // indicar API KEY para el API de tipo "browser" de Google Places
     final String GOOGLE_KEY = "AIzaSyCbkQQ_VTCL1UGJU2mixsdKdTnfyjHvZiU";
 
-    // Centrado en la UC3M Leganés
-    /*final*/ Double latitude;
-    /*final*/ Double longitude;
+    Double latitude;
+    Double longitude;
 
-    // Radio de búsqueda
     final String radius = "1000000";
-
-    // Tipo de establecimiento (ver API Google Places)
     final String type = "restaurants";
-    //_-----------------------------------------------------------------------------------------------
-    // Nuestro mapa
+
     GoogleMap mMap;
     MapView mMapView;
-    // para perdir permiso de localización
     private final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 1;
 
-
-    //Resto de código de la clase ActivityWithXMLMapFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,78 +91,46 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
-        // Pedimos el objeto GoogleMap de forma asíncrona:
-        // lo recibiremos en OnMapReadyCallback.onMapReady()
-
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
         mMapView.getMapAsync(this);
-
         LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        /*if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            return;
-        }*/
 
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-        System.out.println("==================");
-        System.out.println(longitude);
-        System.out.println("==================");
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            mMap.setMyLocationEnabled(true);
+            centerMap(latitude, longitude);
+
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION_ACCESS_FINE_LOCATION);
+        }
+
+
         return rootView;
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-
-    }
-
-    // Único método de la interfaz OnMapReadyCallback, que implementa nuestra Activity,
-    // que debemos rellenar para hacer uso del mapa una vez que está listo
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        // Obtenemos el mapa, que nunca será NULL,
-        // y ya podemos hacer lo que sea con él
         mMap = googleMap;
 
-
-        // Activamos algunos controles en el mapa:
-        // (https://developers.google.com/maps/documentation/android/interactivity)
-
-        // Primero pedimos el objeto que nos permite modificar la UI.
-        // Todos los cambios efectuados sobre este objeto se reflejan inmediatamente en el mapa
         UiSettings settings = mMap.getUiSettings();
 
         settings.setZoomControlsEnabled(true); // botones para hacer zoom
 
         settings.setCompassEnabled(true); // brújula (sólo se muestra el icono si se rota el mapa con los dedos)
 
-        // Comprobamos si tenemos permiso para acceder a la localización
-        if (ActivityCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            System.out.println("MyMapsExample: Tenemos permisos...");
-        } else {
-            // no tiene permiso, solicitarlo
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION_ACCESS_FINE_LOCATION);
-            // cuando se nos conceda el permiso se llamará a onRequestPermissionsResult()
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            centerMap(latitude, longitude);
         }
 
-        mMap.setMyLocationEnabled(true); // botón "My Location"
-        // En contra de lo que dice la documentación, la llamada
-        //      settings.setMyLocationButtonEnabled(true);
-        // _no_ funciona
 
-
-        // Dadas unas coordenadas, centramos el mapa en ellas
-        centerMap(latitude, longitude);
-
-//-----------------------------------------------------------------------------------------------------
         GooglePlaces places = new GooglePlaces(new OnFinishedListener() {
             @Override
             void onFinished(ArrayList<GooglePlace> list) {
@@ -228,27 +187,19 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
                     LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
+                        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        longitude = location.getLongitude();
+                        latitude = location.getLatitude();
+
+                        mMap.setMyLocationEnabled(true);
+                        centerMap(latitude, longitude);
                         return;
                     }
-                    Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    longitude = location.getLongitude();
-                    latitude = location.getLatitude();
-                    System.out.println("==================");
-                    System.out.println(longitude);
-                    System.out.println("==================");
 
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 
@@ -271,11 +222,11 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             ArrayList<GooglePlace> temp;
             //print the call in the console
             System.out.println("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-                    + latitude + "," + longitude + "&name=100montaditos"  + "&radius=" + radius + "&type=" + type + "&sensor=true&key=" + GOOGLE_KEY);
+                    + latitude + "," + longitude + "&name=100montaditos" + "&radius=" + radius + "&type=" + type + "&sensor=true&key=" + GOOGLE_KEY);
 
             // make Call to the url
             temp = makeCall("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-                    + latitude + "," + longitude + "&name=100montaditos"+"&radius=" + radius + "&type=" + type + "&sensor=true&key=" + GOOGLE_KEY);
+                    + latitude + "," + longitude + "&name=100montaditos" + "&radius=" + radius + "&type=" + type + "&sensor=true&key=" + GOOGLE_KEY);
 
             if (mAfter != null) {
                 //you didnt illustrate what resultString is, you might
@@ -299,7 +250,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             for (int i = 0; i < result.size(); i++) {
                 // make a list of the venus that are loaded in the list.
                 // show the name, the category and the city
-                listTitle.add(i, "Restaurant: " +result.get(i).getName() + "\nLatitude: " + result.get(i).getLatitude() + "\nLongitude:" + result.get(i).getLongitude());
+                listTitle.add(i, "Restaurant: " + result.get(i).getName() + "\nLatitude: " + result.get(i).getLatitude() + "\nLongitude:" + result.get(i).getLongitude());
             }
 
 
@@ -378,7 +329,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
                                         }
                                     }
                                     jsonReader.endObject();
-                                } else{
+                                } else {
                                     jsonReader.skipValue();
                                 }
                             }
@@ -397,7 +348,8 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             }
         }
 
-        return temp;}
+        return temp;
+    }
 
 
 }
