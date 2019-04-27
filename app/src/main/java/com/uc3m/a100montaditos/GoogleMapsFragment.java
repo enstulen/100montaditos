@@ -97,18 +97,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onResume();
 
         mMapView.getMapAsync(this);
-        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-            mMap.setMyLocationEnabled(true);
-            centerMap(latitude, longitude);
-
-        } else {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION_ACCESS_FINE_LOCATION);
-        }
 
 
         return rootView;
@@ -127,6 +116,10 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
             centerMap(latitude, longitude);
         }
 
@@ -193,7 +186,6 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
                         mMap.setMyLocationEnabled(true);
                         centerMap(latitude, longitude);
-                        return;
                     }
 
                 }
