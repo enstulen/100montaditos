@@ -109,7 +109,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onResume();
         mMapView.getMapAsync(this);
         mSearchText=(EditText) rootView.findViewById(R.id.search);
-
+        init();
         return rootView;
     }
 
