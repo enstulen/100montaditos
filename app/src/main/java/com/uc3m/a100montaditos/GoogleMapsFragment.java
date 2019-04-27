@@ -151,6 +151,23 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             longitude = address.getLongitude();
             latitude = address.getLatitude();
             centerMap(latitude, longitude);
+            GooglePlaces places = new GooglePlaces(new OnFinishedListener() {
+                @Override
+                void onFinished(ArrayList<GooglePlace> list) {
+                    final ArrayList<GooglePlace> finalList = list;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (GooglePlace gp : finalList) {
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(Double.valueOf(gp.getLatitude()), Double.valueOf(gp.getLongitude())))
+                                        .title(gp.getName()));
+                            }
+                        }
+                    });
+                }
+            });
+            places.execute();
         }
 
     }
