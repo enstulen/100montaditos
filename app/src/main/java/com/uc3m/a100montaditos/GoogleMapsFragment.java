@@ -80,6 +80,7 @@ class GooglePlace {
 public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "log" ;
+    private static final Object DEFAULT_ZOOM = 10;
     final String GOOGLE_KEY = "AIzaSyCbkQQ_VTCL1UGJU2mixsdKdTnfyjHvZiU";
 
     Double latitude;
@@ -147,6 +148,9 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             Address address = list.get(0);
             Log.d(TAG, "geoLocate: found a location "+address.toString());
             //Toast.makeText(this.getActivity(),address.toString(),Toast.LENGTH_SHORT).show();
+            longitude = address.getLongitude();
+            latitude = address.getLatitude();
+            centerMap(latitude, longitude);
         }
 
     }

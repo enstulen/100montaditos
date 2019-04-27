@@ -41,7 +41,7 @@
             android:id="@+id/search"
             android:hint="Enter 100Montadidos"
             android:imeOptions="actionSearch"
-            android:text="textNoSuggestions"/>
+            android:inputType="textNoSuggestions"/>
 
 
     </RelativeLayout>
