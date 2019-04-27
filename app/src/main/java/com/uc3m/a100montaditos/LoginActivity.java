@@ -104,7 +104,11 @@ public class LoginActivity  extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
+                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getStatusCode());
+                System.out.println(e.getCause());
+
+                Toast.makeText(LoginActivity.this, "You got an error in onActivityResult", Toast.LENGTH_LONG).show();
                 // Google Sign In failed, update UI appropriately
             }
         }
@@ -155,7 +159,7 @@ public class LoginActivity  extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            Toast.makeText(LoginActivity.this, "You got an error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "You got an error in firebaseAuthWithGoogle", Toast.LENGTH_LONG).show();
                             updateUI(null);
                         }
                     }
