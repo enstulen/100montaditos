@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clipChildren="false"
+    tools:context=".DetailActivity">
+
+
+    <FrameLayout
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorBackground"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/detail_imageview"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="-20dp"
+            android:clipChildren="false"
+            app:srcCompat="@color/colorGray"
+            android:elevation="2dp"/>
+
+        <TextView
+            android:id="@+id/detail_english_texview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="50dp"
+            android:textColor="@color/colorGrayDark"
+            android:textSize="18sp"
+            android:text="My Label" />
+
+        <TextView
+            android:id="@+id/detail_spanish_texview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="85dp"
+            android:textColor="@color/colorGrayDark"
+            android:textSize="18sp"
+            android:text="My Label2" />
+
+        <LinearLayout android:background="@color/colorSecondaryBackground"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="200dp"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:layout_marginTop="-5dp"
+                android:text="Type" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:layout_marginTop="-5dp"
+                android:text="Favorites" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:layout_marginTop="-5dp"
+                android:text="Price" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="240dp"
+            >
+
+            <TextView
+                android:id="@+id/detail_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:textColor="@color/colorGrayDark"
+                android:text="Type" />
+
+            <TextView
+                android:id="@+id/detail_favorites"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:textColor="@color/colorGrayDark"
+                android:text="Favorites" />
+
+            <TextView
+                android:id="@+id/detail_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:textColor="@color/colorGrayDark"
+                android:text="Price" />
+
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="350dp"
+        android:layout_marginTop="30dp"
+        android:elevation="2dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:background="@color/colorBackground"
+        >
+
+        <ImageButton
+            android:id="@+id/detail_favoriteButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:src="@drawable/ic_favorite_border_black_24dp"
+            android:layout_weight="1"/>
+        <ImageButton
+            android:id="@+id/detail_shareButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorBackground"
+            android:src="@drawable/ic_share_black_24dp"
+            />
+
+    </LinearLayout>
+
+
+
+
+
+
+</LinearLayout>

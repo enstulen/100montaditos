@@ -1,5 +1,7 @@
 package com.uc3m.a100montaditos;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -114,45 +116,17 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 int position = sectionAdapter.getPositionInSection(getAdapterPosition());
                 MenuItem menuItem = list.get(position);
-                updateFavorite(menuItem);
+                Context context = imageView.getContext();
+
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("menuItem", menuItem);
+                context.startActivity(intent);
 
             }
         });
 
     }
 
-    public void updateFavorite(final MenuItem menuItem) {
-        DatabaseReference favoritesDatabase = FirebaseDatabase.getInstance().getReference("favorites");
-
-        favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DatabaseReference menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
-                DatabaseReference favoritesDatabase = FirebaseDatabase.getInstance().getReference("favorites");
-                if (dataSnapshot.exists()) {
-                    //Remove 1 to menuItem's total favorites
-                    menuItem.setFavorites(menuItem.getFavorites() - 1);
-                    menuItemsDatabase.child(menuItem.getUid()).setValue(menuItem);
-                    //Remove from personal favorite
-                    favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).removeValue();
-                    Toast.makeText(itemView.getContext(), "Removed from favorites", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    //Add 1 to menuItem's total favorites
-                    menuItem.setFavorites(menuItem.getFavorites() + 1);
-                    menuItemsDatabase.child(menuItem.getUid()).setValue(menuItem);
-                    //Add to personal favorite
-                    favoritesDatabase.child(User.getCurrentUser().getUid()).child(menuItem.getUid()).setValue(menuItem);
-                    Toast.makeText(itemView.getContext(), "Added to favorites", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 }
 
 class MenuItemHeaderViewHolder extends RecyclerView.ViewHolder {

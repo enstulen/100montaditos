@@ -1,10 +1,13 @@
 package com.uc3m.a100montaditos;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,14 +27,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ToplistFragment extends Fragment implements TopListRecyclerViewAdapter.ItemClickListener{
+public class ToplistFragment extends Fragment implements TopListRecyclerViewAdapter.ItemClickListener {
 
     DatabaseReference menuItemsDatabase;
     TopListRecyclerViewAdapter adapter;
     ArrayList<MenuItem> menuItems = new ArrayList<>();
     RecyclerView recyclerView;
     Query topListQuery;
-
 
 
     @Nullable
@@ -55,6 +57,18 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
 
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
         topListQuery = menuItemsDatabase.orderByChild("favorites").limitToFirst(100);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (recyclerView.computeVerticalScrollOffset() == 0) {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
+                } else {
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(4 * getContext().getResources().getDisplayMetrics().density);
+                }
+            }
+        });
 
     }
 
@@ -90,6 +104,14 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
 
     @Override
     public void onItemClick(View view, int position) {
+
+        MenuItem menuItem = menuItems.get(position);
+        Context context = getActivity().getApplicationContext();
+
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra("menuItem", menuItem);
+        context.startActivity(intent);
+
 
     }
 }

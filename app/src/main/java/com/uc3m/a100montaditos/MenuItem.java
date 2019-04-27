@@ -1,6 +1,8 @@
 package com.uc3m.a100montaditos;
 
-public class MenuItem {
+import java.io.Serializable;
+
+public class MenuItem implements Serializable {
     String uid;
     String name;
     String description_spanish;
