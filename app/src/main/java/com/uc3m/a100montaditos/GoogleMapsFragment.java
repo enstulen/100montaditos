@@ -95,10 +95,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
-
         mMapView.getMapAsync(this);
-
-
 
         return rootView;
     }
@@ -109,20 +106,10 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         UiSettings settings = mMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
+        settings.setCompassEnabled(true);
 
-        settings.setZoomControlsEnabled(true); // botones para hacer zoom
-
-        settings.setCompassEnabled(true); // brújula (sólo se muestra el icono si se rota el mapa con los dedos)
-
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-            centerMap(latitude, longitude);
-        }
-
+        getLocationAndCenterMap();
 
         GooglePlaces places = new GooglePlaces(new OnFinishedListener() {
             @Override
@@ -147,25 +134,23 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    public void getLocationAndCenterMap() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            centerMap(latitude, longitude);
+        }
+    }
+
     public void centerMap(double latitude, double longitude) {
 
-        // A partir de una pareja de coordenadas (tipo double) creamos un objeto LatLng,
-        // que es el tipo de dato que debemos usar al tratar con mapas
         LatLng position = new LatLng(latitude, longitude);
-
-        // Obtenemos un objeto CameraUpdate que indique el movimiento de cámara que queremos;
-        // en este caso, centrar el mapa en unas coordenadas con el método newLatLng()
-        CameraUpdate update = CameraUpdateFactory.newLatLng(position);
-
-        // Alternativamente, se puede hacer lo mismo a la vez que se cambia el nivel de zoom
-        // (comentar si se desea evitar el zoom)
+        CameraUpdate update;
         float zoom = 10;
         update = CameraUpdateFactory.newLatLngZoom(position, zoom);
-
-        // Más información sobre distintos movimientos de cámara aquí:
-        // http://developer.android.com/reference/com/google/android/gms/maps/CameraUpdateFactory.html
-
-        // Pasamos el tipo de actualización configurada al método del mapa que mueve la cámara
         mMap.moveCamera(update);
 
     }
@@ -174,21 +159,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        longitude = location.getLongitude();
-                        latitude = location.getLatitude();
-
-                        mMap.setMyLocationEnabled(true);
-                        centerMap(latitude, longitude);
-                    }
-
-                }
+                getLocationAndCenterMap();
                 return;
             }
 

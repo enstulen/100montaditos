@@ -34,6 +34,7 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
 
+    Fragment googlemaps;
     /**
      * The main activity consists of BottomNavigationView (the tabs with a fragment each) and an actionbar.
      * Switching tabs will switch what fragment is displayed
@@ -101,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = new ToplistFragment();
                 break;
             case R.id.navigation_maps:
-                fragment = new GoogleMapsFragment();
+                googlemaps = new GoogleMapsFragment();
+                fragment = googlemaps;
         }
         return loadFragment(fragment);
     }
@@ -128,4 +130,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         System.out.println("hala");
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        googlemaps.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
