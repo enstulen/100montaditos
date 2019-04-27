@@ -33,8 +33,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         Intent intent = getIntent();
         MenuItem menuItem = (MenuItem) intent.getSerializableExtra("menuItem");
@@ -195,6 +193,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
     }
+
 
 
 }
