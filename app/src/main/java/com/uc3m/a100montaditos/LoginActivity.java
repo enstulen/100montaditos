@@ -40,6 +40,10 @@ public class LoginActivity  extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
 
+    /**
+     * Setup Firebase and Google Signin. Also functionality for the signin button
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +78,20 @@ public class LoginActivity  extends AppCompatActivity {
 
     }
 
+    /**
+     * Sign in user
+     */
     private void signIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /**
+     * Result from signing in
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -97,6 +110,10 @@ public class LoginActivity  extends AppCompatActivity {
         }
     }
 
+    /**
+     * If user successfully logs in, update the UI to go to the MainActivity
+     * @param user
+     */
     private void updateUI(FirebaseUser user) {
         if (user != null ) {
             final User loggedInUser = new User(user.getUid(), user.getEmail(), user.getDisplayName());
@@ -122,6 +139,10 @@ public class LoginActivity  extends AppCompatActivity {
 
     }
 
+    /**
+     * Authenticate user with Firebase
+     * @param acct
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);

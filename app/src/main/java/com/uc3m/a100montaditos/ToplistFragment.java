@@ -42,6 +42,11 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
         return inflater.inflate(R.layout.fragment_toplist, null);
     }
 
+    /**
+     * Get items from firebase and setup recyclerView
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -72,6 +77,10 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
 
     }
 
+    /**
+     * Get data from firebase and update the list
+     * @param dataSnapshot
+     */
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
         menuItems.clear();
 
@@ -86,6 +95,9 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
 
     }
 
+    /**
+     * This is run when it starts
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -102,6 +114,11 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
         });
     }
 
+    /**
+     * Clicking an item will show the DetailActivity
+     * @param view
+     * @param position
+     */
     @Override
     public void onItemClick(View view, int position) {
 

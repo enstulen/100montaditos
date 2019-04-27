@@ -54,6 +54,11 @@ class MenuItemSection extends StatelessSection {
         return new MenuItemViewHolder(view, sectionAdapter,list);
     }
 
+    /**
+     * Bind all the information. (Set the text, image etc)
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
         MenuItemViewHolder itemHolder = (MenuItemViewHolder) holder;
@@ -102,6 +107,12 @@ class MenuItemViewHolder extends RecyclerView.ViewHolder {
     TextView textView_price;
     ImageView imageView;
 
+    /**
+     * ViewHolder for the menuItems. Clicking it displays the DetailView
+     * @param itemView
+     * @param sectionAdapter
+     * @param list
+     */
     public MenuItemViewHolder(final View itemView, final SectionedRecyclerViewAdapter sectionAdapter, final List<MenuItem> list) {
         super(itemView);
         imageView = itemView.findViewById(R.id.imageView);

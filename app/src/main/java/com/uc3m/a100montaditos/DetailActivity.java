@@ -25,6 +25,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     MenuItem menuItem;
 
+    /**
+     * Fills inn details for textviews and image.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +75,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    /**
+     * Back button
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
         switch (item.getItemId()) {
@@ -83,6 +92,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
+    /**
+     * Functions for the two buttons, favorite and share.
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -99,6 +112,9 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    /**
+     * Share sheet for sharing a menuItem
+     */
     public void share(){
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
@@ -106,6 +122,12 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         startActivity(Intent.createChooser(share, "Choose app to share"));
     }
 
+    /**
+     * Favorite or unfavorite a menuItem. Icon will be updated and server will be updated. CheckStatus is for
+     * checking if it's already favorited or not (the first time) to display the correct icon.
+     * @param menuItem
+     * @param checkStatus
+     */
     public void updateFavorite(final MenuItem menuItem, final boolean checkStatus) {
         DatabaseReference favoritesDatabase = FirebaseDatabase.getInstance().getReference("favorites");
 

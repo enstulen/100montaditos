@@ -34,6 +34,11 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
 
+    /**
+     * The main activity consists of BottomNavigationView (the tabs with a fragment each) and an actionbar.
+     * Switching tabs will switch what fragment is displayed
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+    /**
+     * Load the fragment
+     * @param fragment
+     * @return
+     */
     private boolean loadFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager()
@@ -72,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+    /**
+     * Choose which fragment to show
+     * @param menuItem
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
@@ -91,6 +106,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return loadFragment(fragment);
     }
 
+    /**
+     * Menu from top right corner. Logs out the user.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

@@ -42,6 +42,11 @@ public class FavoritesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_favorites, null);
     }
 
+    /**
+     * Get items from firebase and setup recyclerView
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,6 +81,10 @@ public class FavoritesFragment extends Fragment {
 
     }
 
+    /**
+     * Get data from firebase and update the list view
+     * @param dataSnapshot
+     */
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
         montaditosList.clear();
         drinksList.clear();
@@ -104,6 +113,9 @@ public class FavoritesFragment extends Fragment {
 
     }
 
+    /**
+     * Run this when starting
+     */
     @Override
     public void onStart() {
         super.onStart();

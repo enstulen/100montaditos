@@ -34,6 +34,11 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     SectionedRecyclerViewAdapter sectionAdapter;
 
+    /**
+     * Get items from firebase and setup recyclerView
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -68,7 +73,10 @@ public class HomeFragment extends Fragment {
 
 
     }
-
+    /**
+     * Get data from firebase and update the list view
+     * @param dataSnapshot
+     */
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
         montaditosList.clear();
         drinksList.clear();
@@ -96,6 +104,10 @@ public class HomeFragment extends Fragment {
 
     }
 
+
+    /**
+     * Run this when starting
+     */
     @Override
     public void onStart() {
         super.onStart();
