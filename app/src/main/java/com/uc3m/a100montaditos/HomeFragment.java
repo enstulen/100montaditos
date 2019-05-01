@@ -24,6 +24,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
@@ -101,6 +103,18 @@ public class HomeFragment extends Fragment {
                 otherList.add(menuItem);
             }
         }
+
+        Collections.sort(montaditosList, new Comparator<MenuItem>() {
+            public int compare(MenuItem o1, MenuItem o2) {
+                return extractInt(o1.name) - extractInt(o2.name);
+            }
+
+            int extractInt(String s) {
+                String num = s.replaceAll("\\D", "");
+                // return 0 if no digits found
+                return num.isEmpty() ? 0 : Integer.parseInt(num);
+            }
+        });
 
         sectionAdapter.removeAllSections();
         if (!montaditosList.isEmpty()) {
