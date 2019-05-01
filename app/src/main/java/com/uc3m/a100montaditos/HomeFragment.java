@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,9 +31,11 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 public class HomeFragment extends Fragment {
 
     DatabaseReference menuItemsDatabase;
-    List<MenuItem> montaditosList, drinksList;
+    List<MenuItem> montaditosList, drinksList, otherList;
     RecyclerView recyclerView;
     SectionedRecyclerViewAdapter sectionAdapter;
+    Query menuItemsQuery;
+
 
     /**
      * Get items from firebase and setup recyclerView
@@ -49,8 +52,13 @@ public class HomeFragment extends Fragment {
 
         //Set up firebase
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
+
+        menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
+        menuItemsQuery = menuItemsDatabase.orderByChild("name").limitToFirst(250);
+
         montaditosList = new ArrayList<MenuItem>();
         drinksList = new ArrayList<MenuItem>();
+        otherList = new ArrayList<MenuItem>();
 
         // Create an instance of SectionedRecyclerViewAdapter
         sectionAdapter = new SectionedRecyclerViewAdapter();
@@ -80,6 +88,7 @@ public class HomeFragment extends Fragment {
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
         montaditosList.clear();
         drinksList.clear();
+        otherList.clear();
 
         for (DataSnapshot montaditoSnapshot : dataSnapshot.getChildren()) {
             MenuItem menuItem = montaditoSnapshot.getValue(MenuItem.class);
@@ -88,17 +97,23 @@ public class HomeFragment extends Fragment {
                 montaditosList.add(menuItem);
             } else if (menuItem.getType().equals("drink")) {
                 drinksList.add(menuItem);
+            }else if (menuItem.getType().equals("other")) {
+                otherList.add(menuItem);
             }
         }
 
         sectionAdapter.removeAllSections();
         if (!montaditosList.isEmpty()) {
-            MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
-            sectionAdapter.addSection(favoritesSection);
+            MenuItemSection menuItemSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
         }
         if (!drinksList.isEmpty()) {
-            MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
-            sectionAdapter.addSection(contactsSection);
+            MenuItemSection menuItemSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
+        }
+        if (!otherList.isEmpty()) {
+            MenuItemSection menuItemSection = new MenuItemSection("OTHER", otherList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
         }
         recyclerView.setAdapter(sectionAdapter);
 
@@ -112,7 +127,7 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        menuItemsDatabase.addValueEventListener(new ValueEventListener() {
+        menuItemsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 getDataAndUpdateListView(dataSnapshot);

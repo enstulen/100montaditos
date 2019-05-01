@@ -61,7 +61,7 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
         recyclerView.setAdapter(adapter);
 
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("menuItems");
-        topListQuery = menuItemsDatabase.orderByChild("favorites").limitToFirst(100);
+        topListQuery = menuItemsDatabase.orderByChild("favorites").limitToFirst(250);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -123,7 +123,7 @@ public class ToplistFragment extends Fragment implements TopListRecyclerViewAdap
     public void onItemClick(View view, int position) {
 
         MenuItem menuItem = menuItems.get(position);
-        Context context = getActivity().getApplicationContext();
+        Context context = getContext();
 
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra("menuItem", menuItem);
