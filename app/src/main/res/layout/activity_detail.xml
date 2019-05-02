@@ -32,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="50dp"
+            android:paddingTop="40dp"
             android:textColor="@color/colorGrayDark"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:text="My Label" />
 
         <TextView
@@ -42,10 +42,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="85dp"
+            android:paddingTop="95dp"
+            android:text="My Label2"
             android:textColor="@color/colorGrayDark"
-            android:textSize="18sp"
-            android:text="My Label2" />
+            android:textSize="16sp" />
 
         <LinearLayout android:background="@color/colorSecondaryBackground"
             android:layout_width="match_parent"
