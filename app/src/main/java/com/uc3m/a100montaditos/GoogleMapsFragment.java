@@ -15,7 +15,6 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -80,19 +79,19 @@ class GooglePlace {
 public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "log" ;
-    private static final Object DEFAULT_ZOOM = 10;
+    //Api Key for google places
     final String GOOGLE_KEY = "AIzaSyCbkQQ_VTCL1UGJU2mixsdKdTnfyjHvZiU";
 
     Double latitude;
     Double longitude;
 
-    final String radius = "1000000";
+    final String radius = "100000";
     final String type = "restaurants";
 
     GoogleMap mMap;
     MapView mMapView;
 
-    //widgets
+    //widgets for search
     private EditText mSearchText;
 
     private final int REQUEST_PERMISSION_ACCESS_FINE_LOCATION = 1;
@@ -101,24 +100,31 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        //request permission of the user for accessing location
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
 
+        //instanciate the mapView
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         mMapView.getMapAsync(this);
+        //instanciate the search
         mSearchText=(EditText) rootView.findViewById(R.id.search);
+        //Method running the search job
         init();
         return rootView;
     }
 
+    /**
+     * Init() method that launches geoLocate method onclick ENTER
+     */
     private void init(){
         Log.d(TAG, "init : initializing");
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                //We want to perform search one the user has clicked ENTER
                 if (actionId== EditorInfo.IME_ACTION_SEARCH
                         || actionId==EditorInfo.IME_ACTION_DONE
                         || event.getAction()==KeyEvent.ACTION_DOWN
@@ -132,10 +138,19 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     * Geolocate accordingly to the {@code String} contained in
+     * {@code mSearchText} it involves Geocoder to fetch {@code longitude}
+     * and {@code latitude} from places
+     *
+     *
+     *
+     * @param
+     */
 
     private void geoLocate(){
         Log.d(TAG, "geoLocate : Geolocating user");
-
+        //retrieve string from
         String searchstring = mSearchText.getText().toString();
         Geocoder geocoder= new Geocoder(getContext());
         List<Address> list = new ArrayList<>();
@@ -144,10 +159,10 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         }catch (IOException e){
             Log.e(TAG, "geolocate: IOException "+e.getMessage());
         }
+        //make sure geocoder has not returned empty search
         if (list.size()>0){
             Address address = list.get(0);
             Log.d(TAG, "geoLocate: found a location "+address.toString());
-            //Toast.makeText(this.getActivity(),address.toString(),Toast.LENGTH_SHORT).show();
             longitude = address.getLongitude();
             latitude = address.getLatitude();
             centerMap(latitude, longitude);
@@ -155,6 +170,7 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 void onFinished(ArrayList<GooglePlace> list) {
                     final ArrayList<GooglePlace> finalList = list;
+                    //Runs the Json Parsing
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -172,17 +188,24 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     * onMapReady is the method running the job when the map is displayed
+     *
+     *
+     * @param googleMap the map instance of the previously defined GoogleMap class
+     */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-
+        //retrieve settings to display zoom controls and compass
         UiSettings settings = mMap.getUiSettings();
         settings.setZoomControlsEnabled(true);
         settings.setCompassEnabled(true);
-
+        //center the map on current location
         getLocationAndCenterMap();
-
+        //loop for ploting markers on the map
         GooglePlaces places = new GooglePlaces(new OnFinishedListener() {
             @Override
             void onFinished(ArrayList<GooglePlace> list) {
@@ -206,8 +229,15 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    /**
+     *  getLocationAndCenterMap is used to retrieve user's location and center the map according
+     *  to those parameters
+     *
+     */
     public void getLocationAndCenterMap() {
+        // We first have to make sure the user granted the permission to access his location
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //Enables the my-location layer.
             mMap.setMyLocationEnabled(true);
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -217,6 +247,13 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * Center the map for a given lat,long couple.
+     * zoom is x10
+     *
+     * @param latitude
+     * @param longitude
+     */
     public void centerMap(double latitude, double longitude) {
 
         LatLng position = new LatLng(latitude, longitude);
@@ -226,6 +263,13 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         mMap.moveCamera(update);
 
     }
+
+    /**
+     * if location permission is granted then call getLocationAndCenterMap
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -242,6 +286,10 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         abstract void onFinished(ArrayList<GooglePlace> list);
     }
 
+    /**
+     * Creating an AsyncTask This class allows us to perform background operations
+     * and publish results on the UI thread without having to manipulate threads or handlers.
+     */
     public class GooglePlaces extends AsyncTask<View, Void, ArrayList<GooglePlace>> {
         List<String> listTitle;
         private OnFinishedListener mAfter;
@@ -250,10 +298,16 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
             mAfter = after;
         }
 
-
+        /**
+         * invoked on the background thread immediately after onPreExecute() finishes executing.
+         * This step is used to perform background computation that can take a long time.
+         * The parameters of the asynchronous task are passed to this step.
+         * The result of the computation must be returned by this step and will be passed back to the last step.
+         * @param urls
+         * @return
+         */
         @Override
         protected ArrayList<GooglePlace> doInBackground(View... urls) {
-            System.out.println("appel a doInBackground");
             ArrayList<GooglePlace> temp;
             //print the call in the console
             System.out.println("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
@@ -264,8 +318,6 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
                     + latitude + "," + longitude + "&name=100montaditos" + "&radius=" + radius + "&type=" + type + "&sensor=true&key=" + GOOGLE_KEY);
 
             if (mAfter != null) {
-                //you didnt illustrate what resultString is, you might
-                //want this to be the returned value from doInBackground
                 mAfter.onFinished(temp);
             }
             return temp;
@@ -274,17 +326,16 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         protected void onPreExecute() {
-            // we can start a progress bar here
+            // if one day a request takes more time we'll start a progress bar here
         }
 
         @Override
         protected void onPostExecute(ArrayList<GooglePlace> result) {
-            // Aquí se actualiza el interfaz de usuario
+            // Here we update the user interface
             listTitle = new ArrayList<String>();
 
             for (int i = 0; i < result.size(); i++) {
-                // make a list of the venus that are loaded in the list.
-                // show the name, the category and the city
+                // Put the name, and the location of each restaurants returned by the request in a list
                 listTitle.add(i, "Restaurant: " + result.get(i).getName() + "\nLatitude: " + result.get(i).getLatitude() + "\nLongitude:" + result.get(i).getLongitude());
             }
 
@@ -292,6 +343,14 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * Method doing the checking the URL and doing the JSON Parsing
+     * that is converting the json output from the googlePlace API
+     * and put those results in and array list of googlePlace.
+     *
+     * @param stringURL
+     * @return ArrayList<GooglePlace> an arraylist of googlePlace
+     */
     public static ArrayList<GooglePlace> makeCall(String stringURL) {
 
         URL url = null;
@@ -323,31 +382,31 @@ public class GoogleMapsFragment extends Fragment implements OnMapReadyCallback {
                 jsonReader.beginObject();
                 while (jsonReader.hasNext()) {
                     String name = jsonReader.nextName();
-                    // Busca la cadena "results"
+                    // search for the string "results"
                     if (name.equals("results")) {
-                        // comienza un array de objetos
+                        // begin an object array
                         jsonReader.beginArray();
                         while (jsonReader.hasNext()) {
                             GooglePlace poi = new GooglePlace();
                             jsonReader.beginObject();
-                            // comienza un objeto
+                            // begin an object
                             while (jsonReader.hasNext()) {
                                 name = jsonReader.nextName();
                                 if (name.equals("name")) {
-                                    // si clave "name" guarda el valor
+                                    // if key "name" then keep the value
                                     poi.setName(jsonReader.nextString());
                                     System.out.println("PLACE NAME:" + poi.getName());
                                 } else if (name.equals("geometry")) {
-                                    // Si clave "geometry" empieza un objeto
+                                    // if key "geometry" then begin an object
                                     jsonReader.beginObject();
                                     while (jsonReader.hasNext()) {
                                         name = jsonReader.nextName();
                                         if (name.equals("location")) {
-                                            // dentro de "geometry", si clave "location" empieza un objeto
+                                            // inside "geometry", if key "location" then begin an object
                                             jsonReader.beginObject();
                                             while (jsonReader.hasNext()) {
                                                 name = jsonReader.nextName();
-                                                // se queda con los valores de "lat" y "long" de ese objeto
+                                                // retrieve the values of "lat" and "long" from this object
                                                 if (name.equals("lat")) {
                                                     poi.setLatitude(jsonReader.nextString());
                                                     System.out.println("PLACE LATITUDE:" + poi.getLatitude());
