@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,7 +34,7 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-
+    Fragment currentFragment = new HomeFragment();
     Fragment googlemaps;
     /**
      * The main activity consists of BottomNavigationView (the tabs with a fragment each) and an actionbar.
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(new HomeFragment());
+        loadFragment(currentFragment);
 
         //Custom action bar
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -93,19 +94,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Fragment fragment = null;
         switch (menuItem.getItemId()){
             case R.id.navigation_home:
-                fragment = new HomeFragment();
+                currentFragment = new HomeFragment();
                 break;
             case R.id.navigation_favorites:
-                fragment = new FavoritesFragment();
+                currentFragment = new FavoritesFragment();
                 break;
             case R.id.navigation_top_list:
-                fragment = new ToplistFragment();
+                currentFragment = new ToplistFragment();
                 break;
             case R.id.navigation_maps:
                 googlemaps = new GoogleMapsFragment();
-                fragment = googlemaps;
+                currentFragment = googlemaps;
         }
-        return loadFragment(fragment);
+        return loadFragment(currentFragment);
     }
 
     /**
@@ -120,15 +121,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (id == R.id.logout) {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);        }
+            startActivity(intent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        System.out.println("hala");
-    }
+
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

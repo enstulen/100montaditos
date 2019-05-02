@@ -31,7 +31,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 public class FavoritesFragment extends Fragment {
 
     DatabaseReference menuItemsDatabase;
-    List<MenuItem> montaditosList, drinksList;
+    List<MenuItem> montaditosList, drinksList, otherList;
     RecyclerView recyclerView;
     SectionedRecyclerViewAdapter sectionAdapter;
 
@@ -58,6 +58,8 @@ public class FavoritesFragment extends Fragment {
         menuItemsDatabase = FirebaseDatabase.getInstance().getReference("favorites").child(User.getCurrentUser().getUid());
         montaditosList = new ArrayList<MenuItem>();
         drinksList = new ArrayList<MenuItem>();
+        otherList = new ArrayList<MenuItem>();
+
 
         // Create an instance of SectionedRecyclerViewAdapter
         sectionAdapter = new SectionedRecyclerViewAdapter();
@@ -88,6 +90,7 @@ public class FavoritesFragment extends Fragment {
     public void getDataAndUpdateListView(DataSnapshot dataSnapshot) {
         montaditosList.clear();
         drinksList.clear();
+        otherList.clear();
 
         for (DataSnapshot montaditoSnapshot : dataSnapshot.getChildren()) {
             MenuItem menuItem = montaditoSnapshot.getValue(MenuItem.class);
@@ -96,17 +99,23 @@ public class FavoritesFragment extends Fragment {
                 montaditosList.add(menuItem);
             } else if (menuItem.getType().equals("drink")) {
                 drinksList.add(menuItem);
+            }else if (menuItem.getType().equals("other")) {
+                otherList.add(menuItem);
             }
         }
 
         sectionAdapter.removeAllSections();
         if (!montaditosList.isEmpty()) {
-            MenuItemSection favoritesSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
-            sectionAdapter.addSection(favoritesSection);
+            MenuItemSection menuItemSection = new MenuItemSection("MONTADITOS", montaditosList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
         }
         if (!drinksList.isEmpty()) {
-            MenuItemSection contactsSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
-            sectionAdapter.addSection(contactsSection);
+            MenuItemSection menuItemSection = new MenuItemSection("DRINKS", drinksList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
+        }
+        if (!otherList.isEmpty()) {
+            MenuItemSection menuItemSection = new MenuItemSection("OTHER", otherList, sectionAdapter);
+            sectionAdapter.addSection(menuItemSection);
         }
 
         recyclerView.setAdapter(sectionAdapter);
