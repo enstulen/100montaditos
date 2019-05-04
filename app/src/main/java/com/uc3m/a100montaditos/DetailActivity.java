@@ -59,7 +59,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         String upperString = menuItem.getType().substring(0,1).toUpperCase() + menuItem.getType().substring(1);
         type_textview.setText(upperString);
         favorites_textview.setText(String.valueOf(menuItem.getFavorites()));
-        price_textview.setText(String.valueOf(menuItem.getPrice()));
+        price_textview.setText(String.valueOf(menuItem.getPrice() + "€"));
 
         Picasso.get()
                 .load(menuItem.getImageUrl())
